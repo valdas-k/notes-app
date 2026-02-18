@@ -17,7 +17,7 @@ body {
 
 /* header */
 #header {
-  background-color: antiquewhite;
+  background-color: blanchedalmond;
   padding: 48px 32px;
 }
 
@@ -131,5 +131,41 @@ body {
   flex-direction: column;
   align-items: center;
   padding: 48px 32px;
-  background-color: bisque;
+  background-color: rgb(183, 255, 255);
+  gap: 36px;
+}
+
+#saved-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.saved-note {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid aquamarine;
+  background-color: rgb(165, 245, 165);
+  box-shadow: 6px 6px 14px rgb(67, 137, 67), -6px 6px 14px rgb(67, 137, 67);
+}
+
+.saved-note-date {
+  text-align: center;
+  font-size: 1.125rem; 
+}
+
+.saved-note-title {
+  text-align: center;
+  font-size: 1.75rem;
+}
+
+.saved-note-description {
+  text-align: left;
+  font-size: 1.25rem;
+  line-height: 1.3;
 }
