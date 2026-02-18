@@ -17,4 +17,25 @@
         </ul>
       </nav>
     </header>
+
+    <section id="new-note">
+      <h1 class="section-header">Write a Note:</h1>
+      <div class="note-input">
+        <label for="new-note-title">Title</label>
+        <input type="text" id="new-note-title" name="new-note-title" required maxlength="15">
+      </div>
+      <div class="note-input">
+        <label for="new-note-description">Description</label>
+        <textarea id="new-note-description" name="new-note-description" required maxlength="150"></textarea>
+      </div>
+      <div id="new-note-controls">
+        <button type="submit" onclick="" id="add-note">Add Note</button>
+        <button type="button" onclick="" id="reset-note">Clear fields</button>
+      </div>
+    </section>
+
+    <section id="note-list">
+      <h2 class="section-header">Saved Notes:</h2>
+    </section>
+
 </html>
