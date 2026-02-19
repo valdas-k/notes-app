@@ -1,5 +1,3 @@
-
-
 function updateTitle() {
   if (document.getElementById('saved-notes').children.length > 0) {
     document.getElementById('list-header').textContent = "Saved Notes:";
@@ -22,6 +20,7 @@ function addNote() {
     saveNote(date, title, description);
 
     note.classList.add('saved-note');
+    note.id = date;
     note.innerHTML = `
       <p class="saved-note-date"><em>${date}</em></p>
       <p class="saved-note-title"><strong>${title}</strong></p>
@@ -34,6 +33,7 @@ function addNote() {
     notes.appendChild(note);
     resetNote();
     updateTitle();
+    addEventListeners();
   }
 }
 
@@ -56,6 +56,7 @@ function loadNotes() {
   notesArray.forEach(note => {
     let div = document.createElement('div');
     div.classList.add('saved-note');
+    div.id = note.id;
     div.innerHTML = `
     <p class="saved-note-date"><em>${note.id}</em></p>
       <p class="saved-note-title"><strong>${note.title}</strong></p>
@@ -68,6 +69,26 @@ function loadNotes() {
     savedNotes.appendChild(div);
   });
   updateTitle();
+  addEventListeners();
+}
+
+function addEventListeners() {
+  const deleteButtons = document.querySelectorAll('.delete-note');
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', deleteNote)
+  })
+}
+
+function deleteNote(event) {
+  if (confirm("Do You Want To Delete This Note?")) {
+    const note = event.target.parentElement.parentElement;
+    document.getElementById('saved-notes').removeChild(note);
+    const noteId = event.target.parentElement.parentElement.id;
+    let notesArray = JSON.parse(localStorage.getItem("notes-app")) || [];
+    const updatedArray = notesArray.filter(note => note.id !== noteId);
+    localStorage.setItem("notes-app", JSON.stringify(updatedArray));
+    updateTitle();
+  }
 }
 
 function formatDate() {
