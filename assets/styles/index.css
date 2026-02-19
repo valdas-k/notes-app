@@ -93,7 +93,8 @@ body {
   opacity: 0.5;
 }
 
-#new-note-title:focus, #new-note-description:focus, #add-note:hover, #reset-note:hover {
+#new-note-title:focus, #new-note-description:focus, #add-note:hover, 
+#reset-note:hover, .delete-note:hover, .update-note:hover {
   border-radius: 16px;
   border: 1px solid orange;
   box-shadow: 0 0 6px gray;
@@ -121,8 +122,8 @@ body {
 }
 
 #reset-note {
-  background-color: lightcoral;
-  color: aliceblue;
+  background-color: rgb(240, 232, 128);
+  color: rgb(27, 26, 26);
 }
 
 /* note list section */
@@ -151,7 +152,7 @@ body {
   padding: 16px;
   border: 1px solid aquamarine;
   background-color: rgb(165, 245, 165);
-  box-shadow: 6px 6px 14px rgb(67, 137, 67), -6px 6px 14px rgb(67, 137, 67);
+  box-shadow: 4px 4px 12px rgb(67, 137, 67), -4px 4px 12px rgb(67, 137, 67);
 }
 
 .saved-note-date {
@@ -168,4 +169,29 @@ body {
   text-align: left;
   font-size: 1.25rem;
   line-height: 1.3;
+}
+
+.saved-note-controls {
+  width: 100%;
+}
+
+.saved-note-controls button {
+  width: 49%;
+  font-size: 1.125rem;
+  padding: 4px 0px;
+  border-radius: 8px;
+  border: 1px solid rgb(32, 0, 128);
+  outline: none;
+  transition: 0.3s linear;
+  opacity: 0.8;
+}
+
+.delete-note {
+  background-color: rgb(233, 59, 59);
+  color: aqua;
+}
+
+.update-note {
+  background-color: rgb(59, 108, 233);
+  color: aquamarine;
 }

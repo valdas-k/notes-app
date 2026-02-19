@@ -1,3 +1,5 @@
+
+
 function updateTitle() {
   if (document.getElementById('saved-notes').children.length > 0) {
     document.getElementById('list-header').textContent = "Saved Notes:";
@@ -17,16 +19,55 @@ function addNote() {
     const notes = document.getElementById('saved-notes');
     const note = document.createElement('div');
     const date = formatDate();
+    saveNote(date, title, description);
+
     note.classList.add('saved-note');
     note.innerHTML = `
       <p class="saved-note-date"><em>${date}</em></p>
       <p class="saved-note-title"><strong>${title}</strong></p>
       <p class="saved-note-description">${description}</p>
+      <div class="saved-note-controls">
+        <button class="delete-note">Delete</button>
+        <button class="update-note">Update</button>
+      </div>
     `;
     notes.appendChild(note);
     resetNote();
     updateTitle();
   }
+}
+
+function saveNote(date, noteTitle, noteDescription) {
+  const newNote = {
+    id: date,
+    title: noteTitle,
+    description: noteDescription
+  }
+
+  let notesArray = JSON.parse(localStorage.getItem("notes-app")) || [];
+  notesArray.push(newNote);
+  localStorage.setItem("notes-app", JSON.stringify(notesArray));
+}
+
+function loadNotes() {
+  let notesArray = JSON.parse(localStorage.getItem("notes-app")) || [];
+  const savedNotes = document.getElementById('saved-notes');
+  savedNotes.innerHTML = ``;
+  notesArray.forEach(note => {
+    let div = document.createElement('div');
+    div.classList.add('saved-note');
+    div.innerHTML = `
+    <p class="saved-note-date"><em>${note.id}</em></p>
+      <p class="saved-note-title"><strong>${note.title}</strong></p>
+      <p class="saved-note-description">${note.description}</p>
+      <div class="saved-note-controls">
+        <button class="delete-note">Delete</button>
+        <button class="update-note">Update</button>
+      </div>
+    `;
+    savedNotes.appendChild(div);
+  });
+  updateTitle();
 }
 
 function formatDate() {
@@ -40,4 +81,4 @@ function resetNote() {
   document.getElementById('new-note-description').value = '';
 }
 
-updateTitle();
+loadNotes();
