@@ -55,6 +55,18 @@ body {
   background-color: azure;
 }
 
+#download-notes {
+  width: 100%;
+  font-size: 1.25rem;
+  padding: 4px 0px;
+  border-radius: 8px;
+  border: 1px solid green;
+  transition: 0.3s linear;
+  opacity: 0.8;
+  background-color: rgb(79, 217, 227);
+  color: rgb(27, 26, 26);
+}
+
 .note-input {
   display: flex;
   flex-direction: column;
@@ -96,7 +108,7 @@ body {
 }
 
 #new-note-title:focus, #new-note-description:focus, #add-note:hover, 
-#reset-note:hover, .delete-note:hover, .update-note:hover {
+#reset-note:hover, .delete-note:hover, .update-note:hover, #download-notes:hover {
   border-radius: 16px;
   border: 1px solid orange;
   box-shadow: 0 0 6px gray;
@@ -136,6 +148,12 @@ body {
   padding: 48px 32px;
   background-color: rgb(183, 255, 255);
   gap: 36px;
+}
+
+#header-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 #saved-notes {

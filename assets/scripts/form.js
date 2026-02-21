@@ -3,8 +3,10 @@ let currentTask = null;
 function updateTitle() {
   if (document.getElementById('saved-notes').children.length > 0) {
     document.getElementById('list-header').textContent = "Saved Notes:";
+    document.getElementById('download-notes').style.display = "block";
   } else {
     document.getElementById('list-header').textContent = "No Notes Saved";
+    document.getElementById('download-notes').style.display = "none";
   }
 }
 
@@ -58,6 +60,7 @@ function loadNotes() {
     savedNotes.appendChild(div);
   });
   updateTitle();
+  resetNote();
 }
 
 function fillNote(id, title, description) {
@@ -93,8 +96,8 @@ function fillNote(id, title, description) {
     updateButton.classList.add('update-note');
     updateButton.textContent = `Update`;
     addUpdateEvent(updateButton);
-
     innerDiv.appendChild(updateButton);
+
     div.appendChild(innerDiv);
     return div;
 }
@@ -108,6 +111,10 @@ function addDeleteEvent(button) {
 function addUpdateEvent(button) {
   button.addEventListener('click', (event) => {
     updateNote(event);
+
+    const updateLink = document.createElement('a');
+    updateLink.href = '#new-note';
+    updateLink.click();
   })
 }
 
@@ -144,4 +151,30 @@ function resetNote() {
   document.getElementById('new-note-description').value = '';
 }
 
+function downloadNotes() {
+  let notes = JSON.parse(localStorage.getItem("notes-app")) || [];
+  let text = ``;
+  notes.forEach(note => {
+    text += `${note.id}\n${note.title}\n${note.description}\n\n`;
+  });
+  let blob = new Blob([text], { type: 'text/plain' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'MyNotes.txt';
+  link.click();
+}
+
+function loadEvents() {
+  document.getElementById('add-note').addEventListener('click', () => {
+    addNote();
+  })
+  document.getElementById('reset-note').addEventListener('click', () => {
+    resetNote();
+  })
+  document.getElementById('download-notes').addEventListener('click', () => {
+    downloadNotes();
+  })
+}
+
 loadNotes();
+loadEvents();
