@@ -1,9 +1,23 @@
+let currentTask = null;
+function chooseTask() {
+  if (currentTask === null) {
+    addNote();
+  } else {
+    changeNote();
+  }
+}
+
 function updateTitle() {
   if (document.getElementById('saved-notes').children.length > 0) {
     document.getElementById('list-header').textContent = "Saved Notes:";
   } else {
     document.getElementById('list-header').textContent = "No Notes Saved";
   }
+}
+
+function changeNote() {
+  console.log("changed note");
+  currentTask = null;
 }
 
 function addNote() {
@@ -15,25 +29,12 @@ function addNote() {
     alert("Please fill out the description field");
   } else {
     const notes = document.getElementById('saved-notes');
-    const note = document.createElement('div');
     const date = formatDate();
+    const note = fillNote(date, title, description);
     saveNote(date, title, description);
-
-    note.classList.add('saved-note');
-    note.id = date;
-    note.innerHTML = `
-      <p class="saved-note-date"><em>${date}</em></p>
-      <p class="saved-note-title"><strong>${title}</strong></p>
-      <p class="saved-note-description">${description}</p>
-      <div class="saved-note-controls">
-        <button class="delete-note">Delete</button>
-        <button class="update-note">Update</button>
-      </div>
-    `;
     notes.appendChild(note);
     resetNote();
     updateTitle();
-    addEventListeners();
   }
 }
 
@@ -54,29 +55,70 @@ function loadNotes() {
   const savedNotes = document.getElementById('saved-notes');
   savedNotes.innerHTML = ``;
   notesArray.forEach(note => {
-    let div = document.createElement('div');
-    div.classList.add('saved-note');
-    div.id = note.id;
-    div.innerHTML = `
-    <p class="saved-note-date"><em>${note.id}</em></p>
-      <p class="saved-note-title"><strong>${note.title}</strong></p>
-      <p class="saved-note-description">${note.description}</p>
-      <div class="saved-note-controls">
-        <button class="delete-note">Delete</button>
-        <button class="update-note">Update</button>
-      </div>
-    `;
+    const div = fillNote(note.id, note.title, note.description);
     savedNotes.appendChild(div);
   });
   updateTitle();
-  addEventListeners();
 }
 
-function addEventListeners() {
-  const deleteButtons = document.querySelectorAll('.delete-note');
-  deleteButtons.forEach(button => {
-    button.addEventListener('click', deleteNote)
+function fillNote(id, title, description) {
+  const div = document.createElement('div');
+    div.classList.add('saved-note');
+    div.id = id;
+
+    const p1 = document.createElement('p');
+    p1.classList.add('saved-note-date');
+    p1.innerHTML = `<em>${id}</em>`;
+    div.appendChild(p1);
+
+    const p2 = document.createElement('p');
+    p2.classList.add('saved-note-title');
+    p2.innerHTML = `<strong>${title}</strong>`;
+    div.appendChild(p2);
+
+    const p3 = document.createElement('p');
+    p3.classList.add('saved-note-description');
+    p3.textContent = `${description}`;
+    div.appendChild(p3);
+
+    const innerDiv = document.createElement('div');
+    innerDiv.classList.add('saved-note-controls');
+
+    const deleteButton = document.createElement('button');
+    deleteButton.classList.add('delete-note');
+    deleteButton.textContent = `Delete`;
+    addDeleteEvent(deleteButton);
+    innerDiv.appendChild(deleteButton);
+
+    const updateButton = document.createElement('button');
+    updateButton.classList.add('update-note');
+    updateButton.textContent = `Update`;
+    addUpdateEvent(updateButton);
+
+    innerDiv.appendChild(updateButton);
+    div.appendChild(innerDiv);
+    return div;
+}
+
+function addDeleteEvent(button) {
+  button.addEventListener('click', (event) => {
+    deleteNote(event);
   })
+}
+
+function addUpdateEvent(button) {
+  button.addEventListener('click', (event) => {
+    updateNote(event);
+  })
+}
+
+function updateNote(event) {
+  currentTask = 1;
+  const noteId = event.target.parentElement.parentElement.id;
+  let notesArray = JSON.parse(localStorage.getItem("notes-app")) || [];
+  let chosenNote = notesArray.filter(note => note.id == noteId);
+  document.getElementById('new-note-title').value = chosenNote[0].title;
+  document.getElementById('new-note-description').value = chosenNote[0].description;
 }
 
 function deleteNote(event) {

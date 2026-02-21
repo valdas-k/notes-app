@@ -148,7 +148,7 @@ body {
 .saved-note {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 14px;
   width: 100%;
   border-radius: 16px;
   padding: 16px;
@@ -175,6 +175,9 @@ body {
 
 .saved-note-controls {
   width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .saved-note-controls button {
