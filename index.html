@@ -26,8 +26,9 @@
         <label for="new-note-description">Description</label>
         <textarea id="new-note-description" name="new-note-description" maxlength="150"></textarea>
       </div>
+      <input type="hidden" id="new-note-id" name="new-note-id" value="">
       <div id="new-note-controls">
-        <button type="submit" onclick="chooseTask()" id="add-note">Add Note</button>
+        <button type="submit" onclick="addNote()" id="add-note">Add Note</button>
         <button type="button" onclick="resetNote()" id="reset-note">Reset Note</button>
       </div>
     </section>

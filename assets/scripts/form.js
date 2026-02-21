@@ -1,11 +1,4 @@
 let currentTask = null;
-function chooseTask() {
-  if (currentTask === null) {
-    addNote();
-  } else {
-    changeNote();
-  }
-}
 
 function updateTitle() {
   if (document.getElementById('saved-notes').children.length > 0) {
@@ -13,11 +6,6 @@ function updateTitle() {
   } else {
     document.getElementById('list-header').textContent = "No Notes Saved";
   }
-}
-
-function changeNote() {
-  console.log("changed note");
-  currentTask = null;
 }
 
 function addNote() {
@@ -28,13 +16,24 @@ function addNote() {
   } else if (description.length == 0) {
     alert("Please fill out the description field");
   } else {
-    const notes = document.getElementById('saved-notes');
-    const date = formatDate();
-    const note = fillNote(date, title, description);
-    saveNote(date, title, description);
-    notes.appendChild(note);
+    if (currentTask === null) {
+      const date = formatDate();
+      const notes = document.getElementById('saved-notes');
+      const note = fillNote(date, title, description);
+      saveNote(date, title, description);
+      notes.appendChild(note);
+      updateTitle();
+    } else {
+      const id = document.getElementById('new-note-id').value;
+      let originalNotes = JSON.parse(localStorage.getItem("notes-app")) || [];
+      const updatedNotes = originalNotes.map(note =>
+        note.id === id ? { ...note, title: title, description: description } : note
+      )
+      localStorage.setItem("notes-app", JSON.stringify(updatedNotes));
+      currentTask = null;
+      loadNotes();
+    }
     resetNote();
-    updateTitle();
   }
 }
 
@@ -117,6 +116,7 @@ function updateNote(event) {
   const noteId = event.target.parentElement.parentElement.id;
   let notesArray = JSON.parse(localStorage.getItem("notes-app")) || [];
   let chosenNote = notesArray.filter(note => note.id == noteId);
+  document.getElementById('new-note-id').value = chosenNote[0].id;
   document.getElementById('new-note-title').value = chosenNote[0].title;
   document.getElementById('new-note-description').value = chosenNote[0].description;
 }
