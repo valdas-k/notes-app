@@ -2,11 +2,13 @@ let currentTask = null;
 
 function updateTitle() {
   if (document.getElementById('saved-notes').children.length > 0) {
-    document.getElementById('list-header').textContent = "Saved Notes:";
+    document.getElementById('list-header').textContent = "Saved notes:";
     document.getElementById('download-notes').style.display = "block";
+    document.getElementById('delete-all-notes').style.display = "block";
   } else {
-    document.getElementById('list-header').textContent = "No Notes Saved";
+    document.getElementById('list-header').textContent = "No notes saved";
     document.getElementById('download-notes').style.display = "none";
+    document.getElementById('delete-all-notes').style.display = "none";
   }
 }
 
@@ -14,9 +16,9 @@ function addNote() {
   const title = document.getElementById('new-note-title').value;
   const description = document.getElementById('new-note-description').value;
   if (title.length == 0) {
-    alert("Please fill out the title field");
+    alert("Please fill the title field");
   } else if (description.length == 0) {
-    alert("Please fill out the description field");
+    alert("Please fill the description field");
   } else {
     if (currentTask === null) {
       const date = formatDate();
@@ -25,6 +27,10 @@ function addNote() {
       saveNote(date, title, description);
       notes.appendChild(note);
       updateTitle();
+
+      const updateLink = document.createElement('a');
+      updateLink.href = `#${date}`;
+      updateLink.click();
     } else {
       const id = document.getElementById('new-note-id').value;
       let originalNotes = JSON.parse(localStorage.getItem("notes-app")) || [];
@@ -34,6 +40,10 @@ function addNote() {
       localStorage.setItem("notes-app", JSON.stringify(updatedNotes));
       currentTask = null;
       loadNotes();
+
+      const updateLink = document.createElement('a');
+      updateLink.href = `#${id}`;
+      updateLink.click();
     }
     resetNote();
   }
@@ -65,56 +75,52 @@ function loadNotes() {
 
 function fillNote(id, title, description) {
   const div = document.createElement('div');
-    div.classList.add('saved-note');
-    div.id = id;
+  div.classList.add('saved-note');
+  div.id = id;
 
-    const p1 = document.createElement('p');
-    p1.classList.add('saved-note-date');
-    p1.innerHTML = `<em>${id}</em>`;
-    div.appendChild(p1);
+  const p1 = document.createElement('p');
+  p1.classList.add('saved-note-date');
+  p1.innerHTML = `<em>${id}</em>`;
+  div.appendChild(p1);
 
-    const p2 = document.createElement('p');
-    p2.classList.add('saved-note-title');
-    p2.innerHTML = `<strong>${title}</strong>`;
-    div.appendChild(p2);
+  const p2 = document.createElement('p');
+  p2.classList.add('saved-note-title');
+  p2.innerHTML = `<strong>${title}</strong>`;
+  div.appendChild(p2);
 
-    const p3 = document.createElement('p');
-    p3.classList.add('saved-note-description');
-    p3.textContent = `${description}`;
-    div.appendChild(p3);
+  const p3 = document.createElement('p');
+  p3.classList.add('saved-note-description');
+  p3.textContent = `${description}`;
+  div.appendChild(p3);
 
-    const innerDiv = document.createElement('div');
-    innerDiv.classList.add('saved-note-controls');
+  const innerDiv = document.createElement('div');
+  innerDiv.classList.add('saved-note-controls');
 
-    const deleteButton = document.createElement('button');
-    deleteButton.classList.add('delete-note');
-    deleteButton.textContent = `Delete`;
-    addDeleteEvent(deleteButton);
-    innerDiv.appendChild(deleteButton);
+  const deleteButton = document.createElement('button');
+  deleteButton.classList.add('delete-note');
+  deleteButton.textContent = `Delete`;
+  innerDiv.appendChild(deleteButton);
 
-    const updateButton = document.createElement('button');
-    updateButton.classList.add('update-note');
-    updateButton.textContent = `Update`;
-    addUpdateEvent(updateButton);
-    innerDiv.appendChild(updateButton);
+  const updateButton = document.createElement('button');
+  updateButton.classList.add('update-note');
+  updateButton.textContent = `Update`;
+  innerDiv.appendChild(updateButton);
+  addNoteEvents(updateButton, deleteButton);
 
-    div.appendChild(innerDiv);
-    return div;
+  div.appendChild(innerDiv);
+  return div;
 }
 
-function addDeleteEvent(button) {
-  button.addEventListener('click', (event) => {
-    deleteNote(event);
-  })
-}
-
-function addUpdateEvent(button) {
-  button.addEventListener('click', (event) => {
+function addNoteEvents(updateButton, deleteButton) {
+  updateButton.addEventListener('click', (event) => {
     updateNote(event);
-
     const updateLink = document.createElement('a');
     updateLink.href = '#new-note';
     updateLink.click();
+  })
+
+  deleteButton.addEventListener('click', (event) => {
+    deleteNote(event);
   })
 }
 
@@ -129,7 +135,7 @@ function updateNote(event) {
 }
 
 function deleteNote(event) {
-  if (confirm("Do You Want To Delete This Note?")) {
+  if (confirm("Do You want to delete this note?")) {
     const note = event.target.parentElement.parentElement;
     document.getElementById('saved-notes').removeChild(note);
     const noteId = event.target.parentElement.parentElement.id;
@@ -164,6 +170,14 @@ function downloadNotes() {
   link.click();
 }
 
+function deleteAllNotes() {
+  if (confirm("Do You want to delete all notes?")) {
+    document.getElementById('saved-notes').innerHTML = ``;
+    localStorage.setItem("notes-app", JSON.stringify([]));
+    loadNotes();
+  }
+}
+
 function loadEvents() {
   document.getElementById('add-note').addEventListener('click', () => {
     addNote();
@@ -173,6 +187,9 @@ function loadEvents() {
   })
   document.getElementById('download-notes').addEventListener('click', () => {
     downloadNotes();
+  })
+  document.getElementById('delete-all-notes').addEventListener('click', () => {
+    deleteAllNotes();
   })
 }
 
