@@ -67,6 +67,18 @@ body {
   color: rgb(27, 26, 26);
 }
 
+#delete-all-notes {
+  width: 100%;
+  background-color: red;
+  color: aliceblue;
+  font-size: 1.25rem;
+  padding: 4px 0px;
+  border-radius: 8px;
+  border: 1px solid green;
+  transition: 0.3s linear;
+  opacity: 0.8;
+}
+
 .note-input {
   display: flex;
   flex-direction: column;
@@ -202,7 +214,7 @@ body {
   justify-content: space-between;
 }
 
-.saved-note-controls button, #delete-all-notes {
+.saved-note-controls button {
   width: 49%;
   font-size: 1.125rem;
   padding: 4px 0px;
@@ -221,12 +233,6 @@ body {
 .update-note {
   background-color: rgb(59, 108, 233);
   color: aquamarine;
-}
-
-#delete-all-notes {
-  width: 100%;
-  background-color: red;
-  color: aliceblue;
 }
 
 /* footer */
@@ -278,6 +284,69 @@ body {
   color: brown;
 }
 
+/* modal window */
+#modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+#modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: center;
+  background-color: whitesmoke;
+  margin: auto;
+  padding: 16px;
+  border: 1px solid gray;
+  width: 300px;
+  font-size: 1.125rem;
+}
+
+#modal-cancel {
+  font-size: 1.125rem;
+  width: 25px;
+  color: #aaaaaa;
+  align-self: end;
+  font-weight: bold;
+}
+
+#modal-cancel:hover {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#modal-delete {
+  display: none;
+  width: 100%;
+  font-size: 1.125rem;
+  color: aqua;
+  background-color: red;
+  opacity: 0.8;
+  outline: none;
+  border: 1px solid black;
+  border-radius: 8px;
+  padding: 4px 0px;
+  transition: 0.3s;
+}
+
+#modal-delete:hover {
+  background-color: red;
+  opacity: 1;
+  border-radius: 16px;
+  border: 1px solid orange;
+  box-shadow: 0 0 6px gray;
+}
+
 /* tablet + desktop devices */
 @media (min-width: 800px) {
   #saved-notes {
@@ -315,5 +384,9 @@ body {
 
   .description-divider {
     width: 100%;
+  }
+
+  #download-notes, #delete-all-notes {
+    width: 365px;
   }
 }

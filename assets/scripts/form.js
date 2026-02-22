@@ -1,6 +1,6 @@
 let currentTask = null;
 
-function updateTitle() {
+function updateSection() {
   if (document.getElementById('saved-notes').children.length > 0) {
     document.getElementById('list-header').textContent = "Saved notes:";
     document.getElementById('download-notes').style.display = "block";
@@ -16,9 +16,9 @@ function addNote() {
   const title = document.getElementById('new-note-title').value;
   const description = document.getElementById('new-note-description').value;
   if (title.length == 0) {
-    alert("Please fill the title field");
+    showModal("Please fill the title field", "");
   } else if (description.length == 0) {
-    alert("Please fill the description field");
+    showModal("Please fill the description field", "");
   } else {
     if (currentTask === null) {
       const date = formatDate();
@@ -26,11 +26,8 @@ function addNote() {
       const note = fillNote(date, title, description);
       saveNote(date, title, description);
       notes.appendChild(note);
-      updateTitle();
-
-      const updateLink = document.createElement('a');
-      updateLink.href = `#${date}`;
-      updateLink.click();
+      updateSection();
+      clickLink(date);
     } else {
       const id = document.getElementById('new-note-id').value;
       let originalNotes = JSON.parse(localStorage.getItem("notes-app")) || [];
@@ -40,10 +37,7 @@ function addNote() {
       localStorage.setItem("notes-app", JSON.stringify(updatedNotes));
       currentTask = null;
       loadNotes();
-
-      const updateLink = document.createElement('a');
-      updateLink.href = `#${id}`;
-      updateLink.click();
+      clickLink(id);
     }
     resetNote();
   }
@@ -69,8 +63,18 @@ function loadNotes() {
     const div = fillNote(note.id, note.title, note.description);
     savedNotes.appendChild(div);
   });
-  updateTitle();
+  updateSection();
   resetNote();
+}
+
+function updateNote(event) {
+  currentTask = 1;
+  const noteId = event.target.parentElement.parentElement.id;
+  let notesArray = JSON.parse(localStorage.getItem("notes-app")) || [];
+  let chosenNote = notesArray.filter(note => note.id == noteId);
+  document.getElementById('new-note-id').value = chosenNote[0].id;
+  document.getElementById('new-note-title').value = chosenNote[0].title;
+  document.getElementById('new-note-description').value = chosenNote[0].description;
 }
 
 function fillNote(id, title, description) {
@@ -114,9 +118,7 @@ function fillNote(id, title, description) {
 function addNoteEvents(updateButton, deleteButton) {
   updateButton.addEventListener('click', (event) => {
     updateNote(event);
-    const updateLink = document.createElement('a');
-    updateLink.href = '#new-note';
-    updateLink.click();
+    clickLink("new-note");
   })
 
   deleteButton.addEventListener('click', (event) => {
@@ -124,37 +126,19 @@ function addNoteEvents(updateButton, deleteButton) {
   })
 }
 
-function updateNote(event) {
-  currentTask = 1;
-  const noteId = event.target.parentElement.parentElement.id;
-  let notesArray = JSON.parse(localStorage.getItem("notes-app")) || [];
-  let chosenNote = notesArray.filter(note => note.id == noteId);
-  document.getElementById('new-note-id').value = chosenNote[0].id;
-  document.getElementById('new-note-title').value = chosenNote[0].title;
-  document.getElementById('new-note-description').value = chosenNote[0].description;
-}
-
 function deleteNote(event) {
-  if (confirm("Do You want to delete this note?")) {
+  showModal("Do You want to delete this note?", "delete");
+  document.getElementById('modal-delete').onclick = function() {
     const note = event.target.parentElement.parentElement;
     document.getElementById('saved-notes').removeChild(note);
     const noteId = event.target.parentElement.parentElement.id;
     let notesArray = JSON.parse(localStorage.getItem("notes-app")) || [];
     const updatedArray = notesArray.filter(note => note.id !== noteId);
     localStorage.setItem("notes-app", JSON.stringify(updatedArray));
-    updateTitle();
+    updateSection();
+    closeModal();
+    clickLink("")
   }
-}
-
-function formatDate() {
-  const currentDate = new Date();
-  const formatedDate = currentDate.toISOString().slice(0, 19).replace('T', ', ');
-  return formatedDate;
-}
-
-function resetNote() {
-  document.getElementById('new-note-title').value = '';
-  document.getElementById('new-note-description').value = '';
 }
 
 function downloadNotes() {
@@ -164,17 +148,20 @@ function downloadNotes() {
     text += `${note.id}\n${note.title}\n${note.description}\n\n`;
   });
   let blob = new Blob([text], { type: 'text/plain' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'MyNotes.txt';
-  link.click();
+  const downloadLink = document.createElement('a');
+  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.download = 'MyNotes.txt';
+  downloadLink.click();
 }
 
 function deleteAllNotes() {
-  if (confirm("Do You want to delete all notes?")) {
+  showModal("Do You want to delete all notes?", "delete");
+  document.getElementById('modal-delete').onclick = function() {
     document.getElementById('saved-notes').innerHTML = ``;
     localStorage.setItem("notes-app", JSON.stringify([]));
     loadNotes();
+    closeModal();
+    clickLink("")
   }
 }
 
@@ -191,6 +178,40 @@ function loadEvents() {
   document.getElementById('delete-all-notes').addEventListener('click', () => {
     deleteAllNotes();
   })
+  document.getElementById('modal-cancel').addEventListener('click', () => {
+    closeModal();
+  })
+}
+
+function formatDate() {
+  const currentDate = new Date();
+  const formatedDate = currentDate.toISOString().slice(0, 19).replace('T', ', ');
+  return formatedDate;
+}
+
+function resetNote() {
+  document.getElementById('new-note-title').value = '';
+  document.getElementById('new-note-description').value = '';
+}
+
+function showModal(message, type) {
+  document.getElementById('modal-message').textContent = message;
+  document.getElementById('modal').style.display = "block";
+  if (type === "delete") {
+    document.getElementById('modal-delete').style.display = "block";
+  } else {
+    document.getElementById('modal-delete').style.display = "none";
+  }
+}
+
+function closeModal() {
+  document.getElementById('modal').style.display = "none";
+}
+
+function clickLink(target) {
+  const link = document.createElement('a');
+  link.href = `#${target}`;
+  link.click();
 }
 
 loadNotes();
