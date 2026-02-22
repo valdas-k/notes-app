@@ -119,8 +119,8 @@ body {
   opacity: 0.5;
 }
 
-#new-note-title:focus, #new-note-description:focus, #add-note:hover, #delete-all-notes:hover, .up-note:hover,
-#reset-note:hover, .delete-note:hover, .update-note:hover, #download-notes:hover, .down-note:hover {
+#new-note-title:focus, #new-note-description:focus, #add-note:hover, #delete-all-notes:hover, .up-note:hover, 
+#reset-note:hover, .delete-note:hover, .update-note:hover, #download-notes:hover, .down-note:hover, #modal-delete:hover {
   border-radius: 16px;
   border: 1px solid orange;
   box-shadow: 0 0 6px gray;
@@ -358,14 +358,6 @@ body {
   transition: 0.3s;
 }
 
-#modal-delete:hover {
-  background-color: red;
-  opacity: 1;
-  border-radius: 16px;
-  border: 1px solid orange;
-  box-shadow: 0 0 6px gray;
-}
-
 /* tablet + desktop devices */
 @media (min-width: 500px) {
   .saved-note-controls {
@@ -395,7 +387,8 @@ body {
 
   #new-note-description {
     width: 736px;
-    min-width: auto;
+    max-width: 736px;
+    min-width: 735px;
   }
 
   .note-input {

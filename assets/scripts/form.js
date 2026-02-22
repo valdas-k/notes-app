@@ -121,7 +121,6 @@ function fillNote(id, title, description) {
   innerDiv.appendChild(upButton);
 
   addNoteEvents(updateButton, deleteButton, downButton, upButton);
-
   div.appendChild(innerDiv);
   return div;
 }
@@ -152,22 +151,22 @@ function changeNotesOrder(event, movement) {
   if (movement === "down") {
     const downNote = currentNote + 1;
     if (downNote < notesArray.length) {
-        let tmp = notesArray[currentNote];
-        notesArray[currentNote] = notesArray[downNote];
-        notesArray[downNote] = tmp;
-        localStorage.setItem("notes-app", JSON.stringify(notesArray));
-        loadNotes();
-      }
+      swapElements(notesArray, currentNote, downNote);
+    }
   } else {
     const upNote = currentNote - 1;
     if (upNote > -1) {
-      let tmp = notesArray[currentNote];
-      notesArray[currentNote] = notesArray[upNote];
-      notesArray[upNote] = tmp;
-      localStorage.setItem("notes-app", JSON.stringify(notesArray));
-      loadNotes();
+      swapElements(notesArray, currentNote, upNote);
     }
   }
+}
+
+function swapElements(array, currentNote, otherNote) {
+  let tmp = array[currentNote];
+  array[currentNote] = array[otherNote];
+  array[otherNote] = tmp;
+  localStorage.setItem("notes-app", JSON.stringify(array));
+  loadNotes();
 }
 
 function deleteNote(event) {
@@ -181,7 +180,7 @@ function deleteNote(event) {
     localStorage.setItem("notes-app", JSON.stringify(updatedArray));
     updateSection();
     closeModal();
-    clickLink("")
+    clickLink("");
   }
 }
 
@@ -191,9 +190,9 @@ function downloadNotes() {
   notes.forEach(note => {
     text += `${note.id}\n${note.title}\n${note.description}\n\n`;
   });
-  let blob = new Blob([text], { type: 'text/plain' });
+  let file = new Blob([text], { type: 'text/plain' });
   const downloadLink = document.createElement('a');
-  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.href = URL.createObjectURL(file);
   downloadLink.download = 'MyNotes.txt';
   downloadLink.click();
 }
@@ -205,7 +204,7 @@ function deleteAllNotes() {
     localStorage.setItem("notes-app", JSON.stringify([]));
     loadNotes();
     closeModal();
-    clickLink("")
+    clickLink("");
   }
 }
 
@@ -254,10 +253,6 @@ function closeModal() {
 
 function clickLink(target) {
   window.location.href = `#${target}`;
-}
-
-function changeOrder() {
-
 }
 
 loadNotes();
