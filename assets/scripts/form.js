@@ -109,13 +109,24 @@ function fillNote(id, title, description) {
   updateButton.classList.add('update-note');
   updateButton.textContent = `Update`;
   innerDiv.appendChild(updateButton);
-  addNoteEvents(updateButton, deleteButton);
+
+  const downButton = document.createElement('button');
+  downButton.classList.add('down-note');
+  downButton.innerHTML = `&lt;`;
+  innerDiv.appendChild(downButton);
+
+  const upButton = document.createElement('button');
+  upButton.classList.add('up-note');
+  upButton.innerHTML = `&lt;`;
+  innerDiv.appendChild(upButton);
+
+  addNoteEvents(updateButton, deleteButton, downButton, upButton);
 
   div.appendChild(innerDiv);
   return div;
 }
 
-function addNoteEvents(updateButton, deleteButton) {
+function addNoteEvents(updateButton, deleteButton, downButton, upButton) {
   updateButton.addEventListener('click', (event) => {
     updateNote(event);
     clickLink("new-note");
@@ -124,6 +135,39 @@ function addNoteEvents(updateButton, deleteButton) {
   deleteButton.addEventListener('click', (event) => {
     deleteNote(event);
   })
+
+  downButton.addEventListener('click', (event) => {
+    changeNotesOrder(event, "down");
+  })
+
+  upButton.addEventListener('click', (event) => {
+    changeNotesOrder(event, "up");
+  })
+}
+
+function changeNotesOrder(event, movement) {
+  const id = event.target.parentElement.parentElement.id;
+  const notesArray = JSON.parse(localStorage.getItem("notes-app")) || [];
+  const currentNote = notesArray.findIndex(n => n.id === id);
+  if (movement === "down") {
+    const downNote = currentNote + 1;
+    if (downNote < notesArray.length) {
+        let tmp = notesArray[currentNote];
+        notesArray[currentNote] = notesArray[downNote];
+        notesArray[downNote] = tmp;
+        localStorage.setItem("notes-app", JSON.stringify(notesArray));
+        loadNotes();
+      }
+  } else {
+    const upNote = currentNote - 1;
+    if (upNote > -1) {
+      let tmp = notesArray[currentNote];
+      notesArray[currentNote] = notesArray[upNote];
+      notesArray[upNote] = tmp;
+      localStorage.setItem("notes-app", JSON.stringify(notesArray));
+      loadNotes();
+    }
+  }
 }
 
 function deleteNote(event) {
@@ -209,9 +253,11 @@ function closeModal() {
 }
 
 function clickLink(target) {
-  const link = document.createElement('a');
-  link.href = `#${target}`;
-  link.click();
+  window.location.href = `#${target}`;
+}
+
+function changeOrder() {
+
 }
 
 loadNotes();
