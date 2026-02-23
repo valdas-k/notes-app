@@ -120,7 +120,7 @@ body {
 }
 
 #new-note-title:focus, #new-note-description:focus, #add-note:hover, #delete-all-notes:hover, .up-note:hover, 
-#reset-note:hover, .delete-note:hover, .update-note:hover, #download-notes:hover, .down-note:hover, #modal-delete:hover {
+#reset-note:hover, .delete-note:hover, .update-note:hover, #download-notes:hover, .down-note:hover, #delete-modal:hover {
   border-radius: 16px;
   border: 1px solid orange;
   box-shadow: 0 0 6px gray;
@@ -330,7 +330,7 @@ body {
   font-size: 1.125rem;
 }
 
-#modal-cancel {
+#close-modal {
   font-size: 1.125rem;
   width: 25px;
   color: #aaaaaa;
@@ -338,13 +338,13 @@ body {
   font-weight: bold;
 }
 
-#modal-cancel:hover {
+#close-modal:hover {
   color: #000;
   text-decoration: none;
   cursor: pointer;
 }
 
-#modal-delete {
+#delete-modal {
   display: none;
   width: 100%;
   font-size: 1.125rem;

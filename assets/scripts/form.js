@@ -1,12 +1,31 @@
-let currentTask = null;
+let createNote = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('add-note').addEventListener('click', () => {
+    addNote();
+  })
+  document.getElementById('reset-note').addEventListener('click', () => {
+    resetNote();
+  })
+  document.getElementById('download-notes').addEventListener('click', () => {
+    downloadNotes();
+  })
+  document.getElementById('delete-all-notes').addEventListener('click', () => {
+    deleteAllNotes();
+  })
+  document.getElementById('close-modal').addEventListener('click', () => {
+    closeModal();
+  })
+  loadNotes();
+})
 
 function updateSection() {
   if (document.getElementById('saved-notes').children.length > 0) {
-    document.getElementById('list-header').textContent = "Saved notes:";
+    document.getElementById('list-header').textContent = "Saved Notes:";
     document.getElementById('download-notes').style.display = "block";
     document.getElementById('delete-all-notes').style.display = "block";
   } else {
-    document.getElementById('list-header').textContent = "No notes saved";
+    document.getElementById('list-header').textContent = "No Notes Saved";
     document.getElementById('download-notes').style.display = "none";
     document.getElementById('delete-all-notes').style.display = "none";
   }
@@ -20,22 +39,22 @@ function addNote() {
   } else if (description.length == 0) {
     showModal("Please fill the description field", "");
   } else {
-    if (currentTask === null) {
+    if (createNote === null) {
       const date = formatDate();
-      const notes = document.getElementById('saved-notes');
+      const savedNotes = document.getElementById('saved-notes');
       const note = fillNote(date, title, description);
       saveNote(date, title, description);
-      notes.appendChild(note);
+      savedNotes.appendChild(note);
       updateSection();
       clickLink(date);
     } else {
       const id = document.getElementById('new-note-id').value;
-      let originalNotes = JSON.parse(localStorage.getItem("notes-app")) || [];
+      let originalNotes = getNotes();
       const updatedNotes = originalNotes.map(note =>
         note.id === id ? { ...note, title: title, description: description } : note
       )
-      localStorage.setItem("notes-app", JSON.stringify(updatedNotes));
-      currentTask = null;
+      createNote = null;
+      saveNotes(updatedNotes);
       loadNotes();
       clickLink(id);
     }
@@ -43,23 +62,31 @@ function addNote() {
   }
 }
 
-function saveNote(date, noteTitle, noteDescription) {
-  const newNote = {
+function saveNote(date, title, description) {
+  const note = {
     id: date,
-    title: noteTitle,
-    description: noteDescription
+    title: title,
+    description: description,
   }
+  const notes = getNotes();
+  notes.push(note);
+  saveNotes(notes);
+}
 
-  let notesArray = JSON.parse(localStorage.getItem("notes-app")) || [];
-  notesArray.push(newNote);
-  localStorage.setItem("notes-app", JSON.stringify(notesArray));
+function saveNotes(notes) {
+  localStorage.setItem("notes-app", JSON.stringify(notes));
+}
+
+function getNotes() {
+  const notes = JSON.parse(localStorage.getItem("notes-app")) || [];
+  return notes;
 }
 
 function loadNotes() {
-  let notesArray = JSON.parse(localStorage.getItem("notes-app")) || [];
+  const notes = getNotes();
   const savedNotes = document.getElementById('saved-notes');
   savedNotes.innerHTML = ``;
-  notesArray.forEach(note => {
+  notes.forEach(note => {
     const div = fillNote(note.id, note.title, note.description);
     savedNotes.appendChild(div);
   });
@@ -68,10 +95,10 @@ function loadNotes() {
 }
 
 function updateNote(event) {
-  currentTask = 1;
+  createNote = 1;
   const noteId = event.target.parentElement.parentElement.id;
-  let notesArray = JSON.parse(localStorage.getItem("notes-app")) || [];
-  let chosenNote = notesArray.filter(note => note.id == noteId);
+  let notes = getNotes();
+  let chosenNote = notes.filter(note => note.id == noteId);
   document.getElementById('new-note-id').value = chosenNote[0].id;
   document.getElementById('new-note-title').value = chosenNote[0].title;
   document.getElementById('new-note-description').value = chosenNote[0].description;
@@ -130,15 +157,12 @@ function addNoteEvents(updateButton, deleteButton, downButton, upButton) {
     updateNote(event);
     clickLink("new-note");
   })
-
   deleteButton.addEventListener('click', (event) => {
     deleteNote(event);
   })
-
   downButton.addEventListener('click', (event) => {
     changeNotesOrder(event, "down");
   })
-
   upButton.addEventListener('click', (event) => {
     changeNotesOrder(event, "up");
   })
@@ -146,38 +170,38 @@ function addNoteEvents(updateButton, deleteButton, downButton, upButton) {
 
 function changeNotesOrder(event, movement) {
   const id = event.target.parentElement.parentElement.id;
-  const notesArray = JSON.parse(localStorage.getItem("notes-app")) || [];
-  const currentNote = notesArray.findIndex(n => n.id === id);
+  const notes = getNotes();
+  const currentNote = notes.findIndex(n => n.id === id);
   if (movement === "down") {
     const downNote = currentNote + 1;
-    if (downNote < notesArray.length) {
-      swapElements(notesArray, currentNote, downNote);
+    if (downNote < notes.length) {
+      swapElements(notes, currentNote, downNote);
     }
   } else {
     const upNote = currentNote - 1;
     if (upNote > -1) {
-      swapElements(notesArray, currentNote, upNote);
+      swapElements(notes, currentNote, upNote);
     }
   }
 }
 
-function swapElements(array, currentNote, otherNote) {
-  let tmp = array[currentNote];
-  array[currentNote] = array[otherNote];
-  array[otherNote] = tmp;
-  localStorage.setItem("notes-app", JSON.stringify(array));
+function swapElements(notes, currentIndex, targetIndex) {
+  let tmp = notes[currentIndex];
+  notes[currentIndex] = notes[targetIndex];
+  notes[targetIndex] = tmp;
+  saveNotes(notes);
   loadNotes();
 }
 
 function deleteNote(event) {
   showModal("Do You want to delete this note?", "delete");
-  document.getElementById('modal-delete').onclick = function() {
+  document.getElementById('delete-modal').onclick = function() {
     const note = event.target.parentElement.parentElement;
     document.getElementById('saved-notes').removeChild(note);
     const noteId = event.target.parentElement.parentElement.id;
-    let notesArray = JSON.parse(localStorage.getItem("notes-app")) || [];
-    const updatedArray = notesArray.filter(note => note.id !== noteId);
-    localStorage.setItem("notes-app", JSON.stringify(updatedArray));
+    let notes = getNotes();
+    const updatedArray = notes.filter(note => note.id !== noteId);
+    saveNotes(updatedArray);
     updateSection();
     closeModal();
     clickLink("");
@@ -185,7 +209,7 @@ function deleteNote(event) {
 }
 
 function downloadNotes() {
-  let notes = JSON.parse(localStorage.getItem("notes-app")) || [];
+  let notes = getNotes();
   let text = ``;
   notes.forEach(note => {
     text += `${note.id}\n${note.title}\n${note.description}\n\n`;
@@ -199,31 +223,13 @@ function downloadNotes() {
 
 function deleteAllNotes() {
   showModal("Do You want to delete all notes?", "delete");
-  document.getElementById('modal-delete').onclick = function() {
+  document.getElementById('delete-modal').onclick = function() {
     document.getElementById('saved-notes').innerHTML = ``;
-    localStorage.setItem("notes-app", JSON.stringify([]));
+    saveNotes([]);
     loadNotes();
     closeModal();
     clickLink("");
   }
-}
-
-function loadEvents() {
-  document.getElementById('add-note').addEventListener('click', () => {
-    addNote();
-  })
-  document.getElementById('reset-note').addEventListener('click', () => {
-    resetNote();
-  })
-  document.getElementById('download-notes').addEventListener('click', () => {
-    downloadNotes();
-  })
-  document.getElementById('delete-all-notes').addEventListener('click', () => {
-    deleteAllNotes();
-  })
-  document.getElementById('modal-cancel').addEventListener('click', () => {
-    closeModal();
-  })
 }
 
 function formatDate() {
@@ -235,15 +241,16 @@ function formatDate() {
 function resetNote() {
   document.getElementById('new-note-title').value = '';
   document.getElementById('new-note-description').value = '';
+  document.getElementById('new-note-id').value = '';
 }
 
 function showModal(message, type) {
   document.getElementById('modal-message').textContent = message;
   document.getElementById('modal').style.display = "block";
   if (type === "delete") {
-    document.getElementById('modal-delete').style.display = "block";
+    document.getElementById('delete-modal').style.display = "block";
   } else {
-    document.getElementById('modal-delete').style.display = "none";
+    document.getElementById('delete-modal').style.display = "none";
   }
 }
 
@@ -254,6 +261,3 @@ function closeModal() {
 function clickLink(target) {
   window.location.href = `#${target}`;
 }
-
-loadNotes();
-loadEvents();
