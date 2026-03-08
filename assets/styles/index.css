@@ -4,6 +4,11 @@
   box-sizing: border-box;
 }
 
+:root {
+  --placeholder-color: rgb(61, 61, 255);
+  --header-color: #1a1a1a;
+}
+
 body {
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Verdana, sans-serif;
   max-width: 1200px;
@@ -14,7 +19,7 @@ body {
 .section-header {
   font-size: 2.25rem;
   line-height: 1.3;
-  color: #1a1a1a;
+  color: var(--header-color);
 }
 
 /* header */
@@ -58,7 +63,7 @@ body {
 #download-notes {
   width: 100%;
   font-size: 1.25rem;
-  padding: 4px 0px;
+  padding: 8px 0px;
   border-radius: 8px;
   border: 1px solid green;
   transition: 0.3s linear;
@@ -72,7 +77,7 @@ body {
   background-color: red;
   color: aliceblue;
   font-size: 1.25rem;
-  padding: 4px 0px;
+  padding: 8px 0px;
   border-radius: 8px;
   border: 1px solid green;
   transition: 0.3s linear;
@@ -88,6 +93,7 @@ body {
 .note-input label {
   font-size: 1.5rem;
   color: rgb(16, 16, 16);
+  user-select: none;
 }
 
 #new-note-title {
@@ -119,6 +125,10 @@ body {
   opacity: 0.5;
 }
 
+#new-note-description::placeholder, #new-note-title::placeholder {
+  color: var(--placeholder-color);
+}
+
 #new-note-title:focus, #new-note-description:focus, #add-note:hover, #delete-all-notes:hover, .up-note:hover, 
 #reset-note:hover, .delete-note:hover, .update-note:hover, #download-notes:hover, .down-note:hover, #delete-modal:hover {
   border-radius: 16px;
@@ -134,7 +144,7 @@ body {
 #new-note-controls button {
   width: 49%;
   font-size: 1.25rem;
-  padding: 4px 0px;
+  padding: 8px 0px;
   border-radius: 8px;
   border: 1px solid green;
   outline: none;
@@ -217,7 +227,7 @@ body {
 
 .saved-note-controls button {
   font-size: 1.125rem;
-  padding: 4px 0px;
+  padding: 8px 0px;
   border-radius: 8px;
   border: 1px solid rgb(32, 0, 128);
   outline: none;
@@ -237,20 +247,20 @@ body {
   color: aquamarine;
 }
 
-.down-note {
+.down-note, .up-note {
   background-color: rgb(221, 249, 129);
   color: rgb(28, 28, 28);
+  width: 39px;
+  height: 39px;
+}
+
+.down-note {
   rotate: -90deg;
-  width: 35px;
-  height: 35px;
 }
 
 .up-note {
   background-color: rgb(221, 249, 129);
-  color: rgb(28, 28, 28);
   rotate: 90deg;
-  width: 35px;
-  height: 35px;
 }
 
 /* footer */
@@ -354,7 +364,7 @@ body {
   outline: none;
   border: 1px solid black;
   border-radius: 8px;
-  padding: 4px 0px;
+  padding: 8px 0px;
   transition: 0.3s;
 }
 
